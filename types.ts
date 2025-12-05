@@ -1,3 +1,4 @@
+
 export interface DailyStats {
   sleepHours: number;
   codingHours: number;
@@ -23,4 +24,31 @@ export interface CoachAdvice {
 export enum HabitType {
   NUMERIC = 'NUMERIC',
   BOOLEAN = 'BOOLEAN',
+}
+
+// Gamification Types
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  iconPrompt: string;
+  isUnlocked: boolean;
+  unlockedDate?: string;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  username: string;
+  points: number;
+  avatarPrompt: string;
+  isCurrentUser: boolean;
+}
+
+export interface UserProgress {
+  totalPoints: number;
+  level: number;
+  currentLevelXP: number;
+  nextLevelXP: number;
+  badges: Badge[];
 }

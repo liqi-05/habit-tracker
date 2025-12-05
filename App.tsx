@@ -60,7 +60,7 @@ export default function App() {
       <footer className="bg-white dark:bg-gray-900 border-t border-[#F9DFDF] dark:border-gray-800 py-8 mt-auto transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-gray-400 dark:text-gray-600 text-sm font-['Fredoka']">
-            &copy; {new Date().getFullYear()} AI Habit Labs. Made with 💖
+            &copy; {new Date().getFullYear()} AI Habit Labs 2025. 
           </p>
         </div>
       </footer>

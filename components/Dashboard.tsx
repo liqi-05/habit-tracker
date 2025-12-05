@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { DailyStats, PredictionResult, CoachAdvice } from '../types';
+
+import React, { useState, useEffect } from 'react';
+import { DailyStats, PredictionResult, CoachAdvice, UserProgress, LeaderboardEntry } from '../types';
 import { HabitForm } from './HabitForm';
 import { BurnoutGauge } from './BurnoutGauge';
 import { AICoach } from './AICoach';
+import { GamificationHub } from './GamificationHub';
 import { predictor } from '../utils/predictor';
 import { getCoachAdvice } from '../services/geminiService';
+import { calculateDailyPoints, checkNewBadges, getLevelInfo, generateMockLeaderboard, INITIAL_BADGES } from '../utils/gamification';
 import { FireIcon } from '@heroicons/react/24/solid';
 
 const INITIAL_STATS: DailyStats = {
@@ -22,9 +25,28 @@ export const Dashboard: React.FC = () => {
   const [prediction, setPrediction] = useState<PredictionResult | null>(null);
   const [advice, setAdvice] = useState<CoachAdvice | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  // Extra Feature: Mock Streak
   const [streak, setStreak] = useState(3); 
+  
+  // Gamification State
+  const [userProgress, setUserProgress] = useState<UserProgress>({
+    totalPoints: 1250, // Starting with some points so it doesn't look empty
+    level: 5,
+    currentLevelXP: 250,
+    nextLevelXP: 600,
+    badges: INITIAL_BADGES
+  });
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+
+  // Initialize leaderboard on mount
+  useEffect(() => {
+    setLeaderboard(generateMockLeaderboard(userProgress.totalPoints));
+  }, []);
+
+  // Re-calculate leaderboard when points change
+  useEffect(() => {
+    setLeaderboard(generateMockLeaderboard(userProgress.totalPoints));
+  }, [userProgress.totalPoints]);
+
 
   const handleRunAnalysis = async () => {
     setIsProcessing(true);
@@ -33,12 +55,25 @@ export const Dashboard: React.FC = () => {
     const result = predictor.predict(stats);
     setPrediction(result);
 
-    // 2. Get AI Advice (Gemini API)
+    // 2. Gamification Updates
+    const earnedPoints = calculateDailyPoints(stats);
+    const updatedBadges = checkNewBadges(stats, userProgress.badges);
+    const newTotalPoints = userProgress.totalPoints + earnedPoints;
+    const levelInfo = getLevelInfo(newTotalPoints);
+
+    // Update User Progress
+    setUserProgress({
+      totalPoints: newTotalPoints,
+      level: levelInfo.level,
+      currentLevelXP: levelInfo.currentLevelXP,
+      nextLevelXP: levelInfo.nextLevelXP,
+      badges: updatedBadges
+    });
+
+    // 3. Get AI Advice (Gemini API)
     try {
         const coachAdvice = await getCoachAdvice(stats, result);
         setAdvice(coachAdvice);
-        
-        // Simulate increasing streak on successful check-in
         setStreak(prev => prev + 1);
     } catch (e) {
         console.error("Failed to get advice", e);
@@ -49,7 +84,7 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-        {/* Streak Header - Extra Feature */}
+        {/* Streak Header */}
         <div className="flex justify-end">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 px-4 py-2 rounded-2xl border border-orange-200 dark:border-orange-900 shadow-sm">
                 <FireIcon className="h-5 w-5 text-orange-500 animate-pulse" />
@@ -81,9 +116,14 @@ export const Dashboard: React.FC = () => {
             </div>
         </div>
 
-        {/* Bottom Row: AI Coach */}
+        {/* AI Coach */}
         <div className="w-full">
             <AICoach advice={advice} loading={isProcessing} />
+        </div>
+
+        {/* Gamification Hub */}
+        <div className="w-full pt-4">
+            <GamificationHub userProgress={userProgress} leaderboard={leaderboard} />
         </div>
     </div>
   );
