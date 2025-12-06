@@ -1,18 +1,23 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { UserProgress, LeaderboardEntry } from '../types';
 import { GeneratedIcon } from './GeneratedIcon';
-import { TrophyIcon, StarIcon, LockClosedIcon } from '@heroicons/react/24/solid';
+import { TrophyIcon, StarIcon, LockClosedIcon, PencilIcon } from '@heroicons/react/24/solid';
+import { AvatarEditorModal } from './AvatarEditorModal';
 
 interface GamificationHubProps {
   userProgress: UserProgress;
   leaderboard: LeaderboardEntry[];
+  userAvatarPrompt: string;
+  onUpdateAvatar?: (prompt: string) => void;
 }
 
-export const GamificationHub: React.FC<GamificationHubProps> = ({ userProgress, leaderboard }) => {
+export const GamificationHub: React.FC<GamificationHubProps> = ({ userProgress, leaderboard, userAvatarPrompt, onUpdateAvatar }) => {
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const progressPercent = Math.min(100, (userProgress.currentLevelXP / userProgress.nextLevelXP) * 100);
 
   return (
+    <>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
       {/* Left Column: User Profile & Badges */}
@@ -23,9 +28,21 @@ export const GamificationHub: React.FC<GamificationHubProps> = ({ userProgress, 
            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-[#FBEFEF] dark:bg-gray-700 rounded-full opacity-50 blur-2xl"></div>
 
            <div className="flex items-center gap-6 relative z-10">
-              <div className="w-20 h-20 rounded-full border-4 border-[#F5AFAF] bg-white dark:bg-gray-600 flex items-center justify-center overflow-hidden shadow-md">
-                 <GeneratedIcon prompt="cute tomato character doodle thick outlines" fallbackEmoji="🍅" className="w-16 h-16" />
+              <div className="relative group">
+                <div className="w-20 h-20 rounded-full border-4 border-[#F5AFAF] bg-white dark:bg-gray-600 flex items-center justify-center overflow-hidden shadow-md">
+                   {/* Only the Main User Avatar uses AI Generation */}
+                   <GeneratedIcon prompt={userAvatarPrompt} fallbackEmoji="🍅" className="w-16 h-16" />
+                </div>
+                {onUpdateAvatar && (
+                    <button 
+                        onClick={() => setIsEditorOpen(true)}
+                        className="absolute bottom-0 right-0 bg-gray-800 text-white p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#F5AFAF]"
+                    >
+                        <PencilIcon className="h-3 w-3" />
+                    </button>
+                )}
               </div>
+              
               <div className="flex-1">
                 <div className="flex justify-between items-end mb-2">
                    <div>
@@ -70,7 +87,7 @@ export const GamificationHub: React.FC<GamificationHubProps> = ({ userProgress, 
                       }`}
                    >
                       {badge.isUnlocked ? (
-                         <GeneratedIcon prompt={badge.iconPrompt} fallbackEmoji="🏆" className="w-10 h-10 drop-shadow-sm" />
+                         <img src={badge.icon} alt={badge.name} className="w-10 h-10 object-contain drop-shadow-sm" />
                       ) : (
                          <LockClosedIcon className="h-6 w-6 text-gray-300" />
                       )}
@@ -116,8 +133,12 @@ export const GamificationHub: React.FC<GamificationHubProps> = ({ userProgress, 
                      {entry.rank}
                   </div>
                   
-                  <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-600 overflow-hidden border border-gray-100 dark:border-gray-500">
-                     <GeneratedIcon prompt={entry.avatarPrompt} fallbackEmoji="👤" className="w-full h-full" />
+                  <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-600 overflow-hidden border border-gray-100 dark:border-gray-500 flex items-center justify-center">
+                     {entry.isCurrentUser ? (
+                         <GeneratedIcon prompt={userAvatarPrompt} fallbackEmoji="👤" className="w-full h-full" />
+                     ) : (
+                         <img src={entry.avatar} alt={entry.username} className="w-full h-full object-cover" />
+                     )}
                   </div>
                   
                   <div className="flex-1">
@@ -134,7 +155,17 @@ export const GamificationHub: React.FC<GamificationHubProps> = ({ userProgress, 
             ))}
          </div>
       </div>
-
     </div>
+    
+    {/* Editor Modal */}
+    {onUpdateAvatar && (
+        <AvatarEditorModal 
+            isOpen={isEditorOpen} 
+            onClose={() => setIsEditorOpen(false)} 
+            currentPrompt={userAvatarPrompt}
+            onSave={onUpdateAvatar}
+        />
+    )}
+    </>
   );
 };

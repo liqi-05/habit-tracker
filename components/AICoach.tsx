@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { CoachAdvice } from '../types';
 import { SparklesIcon } from '@heroicons/react/24/solid';
-import { GeneratedIcon } from './GeneratedIcon';
+import { STATIC_ASSETS } from '../utils/staticAssets';
 
 interface AICoachProps {
   advice: CoachAdvice | null;
@@ -66,7 +67,7 @@ export const AICoach: React.FC<AICoachProps> = ({ advice, loading }) => {
 
         <div className="flex items-center gap-3 bg-[#FCF8F8] dark:bg-gray-800/50 p-4 rounded-xl border border-[#FBEFEF] dark:border-gray-700">
             <div className="w-8 h-8 flex-shrink-0">
-               <GeneratedIcon prompt="cute mochi style flexed muscle arm symbol" fallbackEmoji="💪" className="w-full h-full" />
+               <img src={STATIC_ASSETS.coach} alt="Coach" className="w-full h-full object-contain" />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 font-medium italic">
             {advice.encouragement}

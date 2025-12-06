@@ -32,7 +32,7 @@ export interface Badge {
   id: string;
   name: string;
   description: string;
-  iconPrompt: string;
+  icon: string;
   isUnlocked: boolean;
   unlockedDate?: string;
 }
@@ -41,7 +41,7 @@ export interface LeaderboardEntry {
   rank: number;
   username: string;
   points: number;
-  avatarPrompt: string;
+  avatar: string;
   isCurrentUser: boolean;
 }
 
@@ -51,4 +51,14 @@ export interface UserProgress {
   currentLevelXP: number;
   nextLevelXP: number;
   badges: Badge[];
+  streak: number;
+}
+
+export interface User {
+  username: string;
+  email: string;
+  password?: string; // In a real app, never store passwords on client!
+  progress: UserProgress;
+  joinedDate: string;
+  avatarPrompt: string;
 }

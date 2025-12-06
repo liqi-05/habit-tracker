@@ -1,5 +1,6 @@
 
 import { DailyStats, Badge, LeaderboardEntry, UserProgress } from '../types';
+import { STATIC_ASSETS } from './staticAssets';
 
 export const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500];
 
@@ -8,35 +9,35 @@ export const INITIAL_BADGES: Badge[] = [
     id: 'first_step',
     name: 'First Step',
     description: 'Complete your first daily check-in',
-    iconPrompt: 'cute baby chick hatching form egg doodle thick outlines',
+    icon: STATIC_ASSETS.badges.first_step,
     isUnlocked: false,
   },
   {
     id: 'hydration_hero',
     name: 'Hydration Hero',
     description: 'Drink more than 2.5L of water in a day',
-    iconPrompt: 'cute water drop superhero character doodle thick outlines',
+    icon: STATIC_ASSETS.badges.hydration_hero,
     isUnlocked: false,
   },
   {
     id: 'zen_master',
     name: 'Zen Master',
     description: 'Report a stress level below 3',
-    iconPrompt: 'cute meditating sloth doodle thick outlines',
+    icon: STATIC_ASSETS.badges.zen_master,
     isUnlocked: false,
   },
   {
     id: 'iron_body',
     name: 'Iron Body',
     description: 'Exercise and Sleep > 7 hours',
-    iconPrompt: 'cute dumbbell with a face doodle thick outlines',
+    icon: STATIC_ASSETS.badges.iron_body,
     isUnlocked: false,
   },
   {
     id: 'bookworm',
     name: 'Bookworm',
     description: 'Read a book',
-    iconPrompt: 'cute worm wearing glasses reading a book doodle thick outlines',
+    icon: STATIC_ASSETS.badges.bookworm,
     isUnlocked: false,
   }
 ];
@@ -105,14 +106,15 @@ export const getLevelInfo = (totalPoints: number) => {
   };
 };
 
-export const generateMockLeaderboard = (userPoints: number): LeaderboardEntry[] => {
+export const generateMockLeaderboard = (userPoints: number, _userAvatarPrompt?: string): LeaderboardEntry[] => {
   // Generate some fake users around the user's score to make it feel competitive
+  // Uses STATIC_ASSETS for mock users to avoid API calls
   const entries: LeaderboardEntry[] = [
-    { rank: 1, username: 'HabitKing', points: userPoints + 450, avatarPrompt: 'cute lion king doodle thick outlines', isCurrentUser: false },
-    { rank: 2, username: 'PixelArtist', points: userPoints + 210, avatarPrompt: 'cute pixel cat doodle thick outlines', isCurrentUser: false },
-    { rank: 3, username: 'CodeNinja', points: userPoints + 80, avatarPrompt: 'cute ninja doodle thick outlines', isCurrentUser: false },
-    { rank: 4, username: 'You', points: userPoints, avatarPrompt: 'cute tomato character doodle thick outlines', isCurrentUser: true },
-    { rank: 5, username: 'SleepyBear', points: Math.max(0, userPoints - 120), avatarPrompt: 'cute sleeping bear doodle thick outlines', isCurrentUser: false },
+    { rank: 1, username: 'HabitKing', points: userPoints + 450, avatar: STATIC_ASSETS.avatars.lion, isCurrentUser: false },
+    { rank: 2, username: 'PixelArtist', points: userPoints + 210, avatar: STATIC_ASSETS.avatars.cat, isCurrentUser: false },
+    { rank: 3, username: 'CodeNinja', points: userPoints + 80, avatar: STATIC_ASSETS.avatars.ninja, isCurrentUser: false },
+    { rank: 4, username: 'You', points: userPoints, avatar: '', isCurrentUser: true }, // 'avatar' is unused for current user, 'avatarPrompt' is used in UI
+    { rank: 5, username: 'SleepyBear', points: Math.max(0, userPoints - 120), avatar: STATIC_ASSETS.avatars.bear, isCurrentUser: false },
   ];
   return entries.sort((a, b) => b.points - a.points).map((entry, index) => ({ ...entry, rank: index + 1 }));
 };

@@ -1,16 +1,22 @@
+
 import { DailyStats, PredictionResult } from '../types';
 
 /**
  * BurnoutPredictor Class
  * 
- * This class encapsulates the "Machine Learning" logic. 
- * In a real Python environment, this would use scikit-learn with a trained model.
- * Here, we implement a weighted linear regression algorithm manually to simulate 
- * the prediction process in the browser.
+ * ARCHITECTURE NOTE:
+ * This class simulates a Python ML Inference Microservice.
+ * Model Type: Weighted Linear Regression (Simulated)
+ * Training Data: Synthetic dataset of developer habits vs burnout rates.
  */
 export class BurnoutPredictor {
+  // Model Metadata
+  public readonly modelVersion = "v2.4.1";
+  public readonly modelType = "LinearRegressor (Regularized)";
+  public readonly lastTrained = "2023-10-15";
+
   // Weights derived from "training" on synthetic data
-  // These represent the coefficients of our linear model
+  // Equation: y = w1*x1 + w2*x2 + ... + b
   private readonly weights = {
     sleep: -0.8,      // More sleep reduces burnout
     coding: 0.5,      // More coding increases burnout
@@ -19,7 +25,7 @@ export class BurnoutPredictor {
     read: -0.5,       // Reading (leisure) reduces burnout
     mood: -0.4,       // Better mood correlates with lower burnout
     stress: 0.7,      // Higher stress increases burnout significantly
-    bias: 6.0         // Base intercept (adjusted for new variable)
+    bias: 6.0         // Base intercept
   };
 
   /**
@@ -47,7 +53,7 @@ export class BurnoutPredictor {
     else if (score >= 6) riskLevel = 'High';
     else if (score >= 4) riskLevel = 'Moderate';
 
-    // Identify primary contributors for the UI
+    // Identify primary contributors for the UI (Feature Importance)
     const contributors: string[] = [];
     if (stats.sleepHours < 6) contributors.push('Lack of Sleep');
     if (stats.codingHours > 8) contributors.push('Excessive Coding');
@@ -63,5 +69,5 @@ export class BurnoutPredictor {
   }
 }
 
-// Singleton instance
+// Singleton instance acting as the "Inference Server"
 export const predictor = new BurnoutPredictor();

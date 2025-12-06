@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { DailyStats } from '../types';
-import { GeneratedIcon } from './GeneratedIcon';
+import { STATIC_ASSETS } from '../utils/staticAssets';
 
 interface HabitFormProps {
   stats: DailyStats;
@@ -21,7 +22,7 @@ export const HabitForm: React.FC<HabitFormProps> = ({ stats, onChange, onSubmit,
 
       <div className="flex items-center gap-4 mb-8">
         <div className="w-14 h-14 rounded-2xl bg-[#FBEFEF] dark:bg-gray-700 flex items-center justify-center overflow-hidden shadow-inner border border-[#F9DFDF] dark:border-gray-600">
-          <GeneratedIcon prompt="cute minimalist clipboard doodle with thick outlines" fallbackEmoji="📝" className="w-10 h-10" />
+          <img src={STATIC_ASSETS.habits.clipboard} alt="Clipboard" className="w-10 h-10 object-contain" />
         </div>
         <div>
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white tracking-wide font-['Fredoka']">
@@ -130,7 +131,7 @@ export const HabitForm: React.FC<HabitFormProps> = ({ stats, onChange, onSubmit,
                         className={`flex flex-col items-center gap-2 transition-transform hover:scale-110 ${stats.mood <= 4 ? 'opacity-100 scale-110' : 'opacity-50 grayscale'}`}
                     >
                          <div className="w-10 h-10">
-                            <GeneratedIcon prompt="cute sad mochi character crying, thick dark outlines doodle style" fallbackEmoji="😔" className="w-full h-full drop-shadow-sm" />
+                            <img src={STATIC_ASSETS.mood.sad} alt="Sad" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-xs font-bold text-gray-400 dark:text-gray-500 font-['Fredoka']">Sad</span>
                     </button>
@@ -139,7 +140,7 @@ export const HabitForm: React.FC<HabitFormProps> = ({ stats, onChange, onSubmit,
                          className={`flex flex-col items-center gap-2 transition-transform hover:scale-110 ${stats.mood > 4 && stats.mood < 8 ? 'opacity-100 scale-110' : 'opacity-50 grayscale'}`}
                     >
                         <div className="w-10 h-10">
-                            <GeneratedIcon prompt="cute neutral mochi character, thick dark outlines doodle style" fallbackEmoji="😐" className="w-full h-full drop-shadow-sm" />
+                           <img src={STATIC_ASSETS.mood.neutral} alt="Neutral" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-xs font-bold text-gray-400 dark:text-gray-500 font-['Fredoka']">Neutral</span>
                     </button>
@@ -148,7 +149,7 @@ export const HabitForm: React.FC<HabitFormProps> = ({ stats, onChange, onSubmit,
                          className={`flex flex-col items-center gap-2 transition-transform hover:scale-110 ${stats.mood >= 8 ? 'opacity-100 scale-110' : 'opacity-50 grayscale'}`}
                     >
                          <div className="w-10 h-10">
-                            <GeneratedIcon prompt="cute happy mochi character smiling, thick dark outlines doodle style" fallbackEmoji="😊" className="w-full h-full drop-shadow-sm" />
+                            <img src={STATIC_ASSETS.mood.happy} alt="Happy" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-xs font-bold text-gray-400 dark:text-gray-500 font-['Fredoka']">Happy</span>
                     </button>
@@ -169,7 +170,7 @@ export const HabitForm: React.FC<HabitFormProps> = ({ stats, onChange, onSubmit,
             }`}
           >
             <div className={`w-14 h-14 transition-transform group-hover:scale-110 duration-300`}>
-              <GeneratedIcon prompt="cute running shoes doodle, thick dark outlines" fallbackEmoji="🏃" className="w-full h-full drop-shadow-sm" />
+              <img src={STATIC_ASSETS.habits.exercise} alt="Exercise" className="w-full h-full object-contain" />
             </div>
             <span className={`font-bold text-sm font-['Fredoka'] ${stats.didExercise ? 'text-gray-800 dark:text-white' : 'text-gray-400'}`}>Exercised</span>
           </button>
@@ -183,7 +184,7 @@ export const HabitForm: React.FC<HabitFormProps> = ({ stats, onChange, onSubmit,
             }`}
           >
              <div className={`w-14 h-14 transition-transform group-hover:scale-110 duration-300`}>
-              <GeneratedIcon prompt="cute open book doodle, thick dark outlines" fallbackEmoji="📖" className="w-full h-full drop-shadow-sm" />
+               <img src={STATIC_ASSETS.habits.read} alt="Read" className="w-full h-full object-contain" />
             </div>
             <span className={`font-bold text-sm font-['Fredoka'] ${stats.didRead ? 'text-gray-800 dark:text-white' : 'text-gray-400'}`}>Read Book</span>
           </button>

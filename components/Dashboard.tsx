@@ -1,14 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { DailyStats, PredictionResult, CoachAdvice, UserProgress, LeaderboardEntry } from '../types';
+import { DailyStats, PredictionResult, CoachAdvice, LeaderboardEntry } from '../types';
 import { HabitForm } from './HabitForm';
 import { BurnoutGauge } from './BurnoutGauge';
 import { AICoach } from './AICoach';
 import { GamificationHub } from './GamificationHub';
 import { predictor } from '../utils/predictor';
 import { getCoachAdvice } from '../services/geminiService';
-import { calculateDailyPoints, checkNewBadges, getLevelInfo, generateMockLeaderboard, INITIAL_BADGES } from '../utils/gamification';
-import { FireIcon } from '@heroicons/react/24/solid';
+import { calculateDailyPoints, checkNewBadges, getLevelInfo, generateMockLeaderboard } from '../utils/gamification';
+import { FireIcon, LockClosedIcon } from '@heroicons/react/24/solid';
+import { useAuth } from '../contexts/AuthContext';
 
 const INITIAL_STATS: DailyStats = {
   sleepHours: 7.0,
@@ -21,32 +22,24 @@ const INITIAL_STATS: DailyStats = {
 };
 
 export const Dashboard: React.FC = () => {
+  const { user, updateUserProgress, updateUserAvatar } = useAuth();
+  
   const [stats, setStats] = useState<DailyStats>(INITIAL_STATS);
   const [prediction, setPrediction] = useState<PredictionResult | null>(null);
   const [advice, setAdvice] = useState<CoachAdvice | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [streak, setStreak] = useState(3); 
   
-  // Gamification State
-  const [userProgress, setUserProgress] = useState<UserProgress>({
-    totalPoints: 1250, // Starting with some points so it doesn't look empty
-    level: 5,
-    currentLevelXP: 250,
-    nextLevelXP: 600,
-    badges: INITIAL_BADGES
-  });
+  // Local state for non-logged in users (streak only)
+  const [localStreak, setLocalStreak] = useState(0); 
+
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
-  // Initialize leaderboard on mount
+  // Initialize leaderboard based on user points or default
   useEffect(() => {
-    setLeaderboard(generateMockLeaderboard(userProgress.totalPoints));
-  }, []);
-
-  // Re-calculate leaderboard when points change
-  useEffect(() => {
-    setLeaderboard(generateMockLeaderboard(userProgress.totalPoints));
-  }, [userProgress.totalPoints]);
-
+    const points = user ? user.progress.totalPoints : 0;
+    const avatarPrompt = user ? user.avatarPrompt : 'cute tomato character doodle thick outlines';
+    setLeaderboard(generateMockLeaderboard(points, avatarPrompt));
+  }, [user]);
 
   const handleRunAnalysis = async () => {
     setIsProcessing(true);
@@ -56,25 +49,31 @@ export const Dashboard: React.FC = () => {
     setPrediction(result);
 
     // 2. Gamification Updates
-    const earnedPoints = calculateDailyPoints(stats);
-    const updatedBadges = checkNewBadges(stats, userProgress.badges);
-    const newTotalPoints = userProgress.totalPoints + earnedPoints;
-    const levelInfo = getLevelInfo(newTotalPoints);
+    if (user) {
+        const earnedPoints = calculateDailyPoints(stats);
+        const updatedBadges = checkNewBadges(stats, user.progress.badges);
+        const newTotalPoints = user.progress.totalPoints + earnedPoints;
+        const levelInfo = getLevelInfo(newTotalPoints);
+        const newStreak = user.progress.streak + 1;
 
-    // Update User Progress
-    setUserProgress({
-      totalPoints: newTotalPoints,
-      level: levelInfo.level,
-      currentLevelXP: levelInfo.currentLevelXP,
-      nextLevelXP: levelInfo.nextLevelXP,
-      badges: updatedBadges
-    });
+        // Update User Progress via Context (saves to DB)
+        updateUserProgress({
+            totalPoints: newTotalPoints,
+            level: levelInfo.level,
+            currentLevelXP: levelInfo.currentLevelXP,
+            nextLevelXP: levelInfo.nextLevelXP,
+            badges: updatedBadges,
+            streak: newStreak
+        });
+    } else {
+        // Just local visual feedback
+        setLocalStreak(prev => prev + 1);
+    }
 
     // 3. Get AI Advice (Gemini API)
     try {
         const coachAdvice = await getCoachAdvice(stats, result);
         setAdvice(coachAdvice);
-        setStreak(prev => prev + 1);
     } catch (e) {
         console.error("Failed to get advice", e);
     } finally {
@@ -82,13 +81,17 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  const currentStreak = user ? user.progress.streak : localStreak;
+
   return (
     <div className="space-y-6">
         {/* Streak Header */}
         <div className="flex justify-end">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 px-4 py-2 rounded-2xl border border-orange-200 dark:border-orange-900 shadow-sm">
                 <FireIcon className="h-5 w-5 text-orange-500 animate-pulse" />
-                <span className="text-orange-800 dark:text-orange-200 font-bold font-['Fredoka']">{streak} Day Streak!</span>
+                <span className="text-orange-800 dark:text-orange-200 font-bold font-['Fredoka']">
+                    {currentStreak} Day Streak!
+                </span>
             </div>
         </div>
 
@@ -121,9 +124,41 @@ export const Dashboard: React.FC = () => {
             <AICoach advice={advice} loading={isProcessing} />
         </div>
 
-        {/* Gamification Hub */}
-        <div className="w-full pt-4">
-            <GamificationHub userProgress={userProgress} leaderboard={leaderboard} />
+        {/* Gamification Hub - Locked if not logged in */}
+        <div className="w-full pt-4 relative">
+            {user ? (
+                <GamificationHub 
+                    userProgress={user.progress} 
+                    leaderboard={leaderboard} 
+                    userAvatarPrompt={user.avatarPrompt}
+                    onUpdateAvatar={updateUserAvatar}
+                />
+            ) : (
+                <div className="relative">
+                    {/* Blurred Background Preview */}
+                    <div className="filter blur-md opacity-50 pointer-events-none select-none">
+                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-64">
+                            <div className="bg-white dark:bg-gray-800 rounded-3xl border border-[#F9DFDF] h-full"></div>
+                            <div className="bg-white dark:bg-gray-800 rounded-3xl border border-[#F9DFDF] h-full"></div>
+                         </div>
+                    </div>
+                    
+                    {/* Call to Action Overlay */}
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center">
+                        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-8 rounded-3xl shadow-xl border-2 border-[#F9DFDF] dark:border-gray-700 max-w-md">
+                            <div className="w-16 h-16 bg-[#FBEFEF] dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <LockClosedIcon className="h-8 w-8 text-[#F5AFAF]" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-white font-['Fredoka'] mb-2">
+                                Unlock Achievements
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
+                                Create a free account to track your level, earn badges, and compete on the global leaderboard!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     </div>
   );

@@ -1,14 +1,21 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard';
-import { ChartBarIcon, QuestionMarkCircleIcon, XMarkIcon, Cog6ToothIcon } from '@heroicons/react/24/solid';
+import { ChartBarIcon, QuestionMarkCircleIcon, XMarkIcon, Cog6ToothIcon, UserCircleIcon, ArrowRightOnRectangleIcon, ServerIcon, CpuChipIcon } from '@heroicons/react/24/solid';
 import { SettingsModal } from './components/SettingsModal';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthModal } from './components/AuthModal';
+import { predictor } from './utils/predictor';
 
-export default function App() {
+// Inner component to use the AuthContext
+const AppContent = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  const { user, logout } = useAuth();
 
-  // Toggle Dark Mode Class on HTML element
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -30,10 +37,29 @@ export default function App() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <div className="hidden sm:block text-xs font-medium px-3 py-1 rounded-full bg-[#FBEFEF] dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-[#F9DFDF] dark:border-gray-700 mr-2">
-              AI Powered
-            </div>
             
+            {/* Auth Buttons */}
+            {user ? (
+               <div className="flex items-center gap-3 mr-2 bg-[#FBEFEF] dark:bg-gray-800/50 pl-3 pr-1 py-1 rounded-full border border-[#F9DFDF] dark:border-gray-700">
+                  <span className="text-sm font-bold text-gray-600 dark:text-gray-300 font-['Fredoka']">Hi, {user.username}</span>
+                  <button 
+                    onClick={logout}
+                    className="p-1.5 bg-white dark:bg-gray-700 rounded-full hover:text-red-400 transition-colors shadow-sm"
+                    title="Log Out"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                  </button>
+               </div>
+            ) : (
+                <button 
+                  onClick={() => setShowAuth(true)}
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#F5AFAF] hover:bg-[#eb9a9a] text-white text-sm font-bold rounded-full shadow-md shadow-[#F5AFAF]/30 transition-all mr-2 font-['Fredoka']"
+                >
+                  <UserCircleIcon className="h-5 w-5" />
+                  Log In
+                </button>
+            )}
+
             <button 
               onClick={() => setShowSettings(true)}
               className="p-2 text-gray-400 hover:text-[#F5AFAF] dark:hover:text-[#F5AFAF] transition-colors rounded-full hover:bg-[#FBEFEF] dark:hover:bg-gray-800"
@@ -57,15 +83,15 @@ export default function App() {
         </div>
       </main>
 
-      <footer className="bg-white dark:bg-gray-900 border-t border-[#F9DFDF] dark:border-gray-800 py-8 mt-auto transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 text-center">
+      <footer className="bg-white dark:bg-gray-900 border-t border-[#F9DFDF] dark:border-gray-800 py-6 mt-auto transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-gray-400 dark:text-gray-600 text-sm font-['Fredoka']">
-            &copy; {new Date().getFullYear()} AI Habit Labs 2025. 
+            &copy; {new Date().getFullYear()} AI Habit Labs.
           </p>
         </div>
       </footer>
 
-      {/* Settings Modal */}
+      {/* Modals */}
       <SettingsModal 
         isOpen={showSettings} 
         onClose={() => setShowSettings(false)} 
@@ -73,7 +99,11 @@ export default function App() {
         toggleTheme={() => setIsDarkMode(!isDarkMode)}
       />
 
-      {/* Help Modal */}
+      <AuthModal 
+        isOpen={showAuth}
+        onClose={() => setShowAuth(false)}
+      />
+
       {showHelp && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl max-w-md w-full p-6 border-2 border-[#F9DFDF] dark:border-gray-700 relative transition-colors duration-300">
@@ -102,13 +132,21 @@ export default function App() {
                 </ul>
               </div>
 
-              <p className="text-sm italic text-center text-gray-400 dark:text-gray-500 mt-4">
-                "Small steps every day lead to big changes."
-              </p>
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg text-xs text-blue-600 dark:text-blue-300 mt-2 text-center">
+                 <strong>Note:</strong> User data is currently simulated using browser storage for demo purposes.
+              </div>
             </div>
           </div>
         </div>
       )}
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

@@ -1,8 +1,10 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { CoachAdvice, DailyStats, PredictionResult } from '../types';
 
 const TEXT_MODEL = 'gemini-2.5-flash';
 const IMAGE_MODEL = 'gemini-2.5-flash-image';
+const ICON_CACHE_KEY = 'hh_icon_cache_v1';
 
 // We assume the API key is available in the environment variables as per instructions.
 const getClient = () => {
@@ -15,6 +17,17 @@ const getClient = () => {
 };
 
 export const generateThemeIcon = async (concept: string): Promise<string | null> => {
+  // 1. Check Persistent Cache (LocalStorage)
+  try {
+    const cacheStr = localStorage.getItem(ICON_CACHE_KEY);
+    const cache = cacheStr ? JSON.parse(cacheStr) : {};
+    if (cache[concept]) {
+      return cache[concept];
+    }
+  } catch (e) {
+    // Ignore cache errors
+  }
+
   const client = getClient();
   if (!client) return null;
 
@@ -44,11 +57,34 @@ export const generateThemeIcon = async (concept: string): Promise<string | null>
 
     for (const part of response.candidates?.[0]?.content?.parts || []) {
       if (part.inlineData) {
-        return `data:image/png;base64,${part.inlineData.data}`;
+        const base64Image = `data:image/png;base64,${part.inlineData.data}`;
+        
+        // 2. Save to Cache
+        try {
+            const cacheStr = localStorage.getItem(ICON_CACHE_KEY);
+            const cache = cacheStr ? JSON.parse(cacheStr) : {};
+            cache[concept] = base64Image;
+            
+            // Simple safeguard: If cache gets too big (>4MB), clear it to avoid QuotaExceededError
+            if (JSON.stringify(cache).length > 4 * 1024 * 1024) {
+                localStorage.removeItem(ICON_CACHE_KEY);
+            } else {
+                localStorage.setItem(ICON_CACHE_KEY, JSON.stringify(cache));
+            }
+        } catch (e) {
+            console.warn("Could not save icon to cache (likely storage full)", e);
+        }
+
+        return base64Image;
       }
     }
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    // Gracefully handle Rate Limits
+    if (error.status === 'RESOURCE_EXHAUSTED' || error.code === 429 || error.toString().includes('429')) {
+        console.warn(`Gemini API Quota Exceeded for icon: "${concept}". Showing fallback emoji.`);
+        return null;
+    }
     console.error("Icon generation failed:", error);
     return null;
   }
