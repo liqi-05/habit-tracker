@@ -54,6 +54,12 @@ export interface UserProgress {
   streak: number;
 }
 
+export interface DailyLog {
+  date: string; // ISO Date String (YYYY-MM-DD)
+  stats: DailyStats;
+  pointsEarned: number;
+}
+
 export interface User {
   username: string;
   email: string;
@@ -61,4 +67,5 @@ export interface User {
   progress: UserProgress;
   joinedDate: string;
   avatarPrompt: string;
+  history: DailyLog[]; // Time-series data for the Correlation Engine
 }

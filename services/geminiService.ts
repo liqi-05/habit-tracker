@@ -90,6 +90,54 @@ export const generateThemeIcon = async (concept: string): Promise<string | null>
   }
 };
 
+export const parseNaturalLanguageStats = async (transcript: string): Promise<Partial<DailyStats>> => {
+  const client = getClient();
+  if (!client) return {};
+
+  const prompt = `
+    Extract health stats from this natural language text: "${transcript}".
+    Return a JSON object with ONLY the fields that are mentioned.
+    Fields (all optional):
+    - sleepHours (number)
+    - codingHours (number)
+    - waterIntake (number)
+    - mood (number 1-10)
+    - stressLevel (number 1-10)
+    - didExercise (boolean)
+    - didRead (boolean)
+  `;
+
+  try {
+    const response = await client.models.generateContent({
+      model: TEXT_MODEL,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            sleepHours: { type: Type.NUMBER },
+            codingHours: { type: Type.NUMBER },
+            waterIntake: { type: Type.NUMBER },
+            mood: { type: Type.NUMBER },
+            stressLevel: { type: Type.NUMBER },
+            didExercise: { type: Type.BOOLEAN },
+            didRead: { type: Type.BOOLEAN },
+          }
+        }
+      }
+    });
+
+    if (response.text) {
+      return JSON.parse(response.text);
+    }
+    return {};
+  } catch (error) {
+    console.error("Failed to parse voice log:", error);
+    return {};
+  }
+};
+
 export const getCoachAdvice = async (
   stats: DailyStats,
   prediction: PredictionResult

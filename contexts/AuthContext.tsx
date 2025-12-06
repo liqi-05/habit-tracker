@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserProgress } from '../types';
+import { User, UserProgress, DailyStats } from '../types';
 import { authService } from '../services/authService';
 
 interface AuthContextType {
@@ -11,6 +11,7 @@ interface AuthContextType {
   logout: () => void;
   updateUserProgress: (progress: UserProgress) => void;
   updateUserAvatar: (prompt: string) => void;
+  saveDailyLog: (stats: DailyStats, points: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,8 +55,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const saveDailyLog = (stats: DailyStats, points: number) => {
+    if (user) {
+        const updatedUser = authService.logDailyStats(user, stats, points);
+        setUser(updatedUser);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, logout, updateUserProgress, updateUserAvatar }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, logout, updateUserProgress, updateUserAvatar, saveDailyLog }}>
       {children}
     </AuthContext.Provider>
   );

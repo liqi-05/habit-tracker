@@ -1,13 +1,13 @@
 
 // This file acts as our "img folder" containing pre-generated assets.
-// These are SVGs encoded as Data URIs.
+// These are SVGs encoded as Data URIs to ensure fast loading and no external dependencies.
 // Style: "Cute Mochi" - Round blobs, kawaii faces, pastel colors, thick soft outlines.
 
 const createSvg = (content: string) => 
   `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" stroke-linecap="round" stroke-linejoin="round">${content}</svg>`)}`;
 
-// Common styles
-const OUTLINE = '#4A4A4A';
+// Common styles for the Mochi Aesthetic
+const OUTLINE = '#4A4A4A'; // Soft dark grey instead of harsh black
 const STROKE = '4';
 
 export const STATIC_ASSETS = {
