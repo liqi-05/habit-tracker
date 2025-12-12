@@ -27,11 +27,7 @@ export const GeneratedIcon: React.FC<GeneratedIconProps> = ({ prompt, fallbackEm
     let isMounted = true;
     
     const fetchIcon = async () => {
-      // Stagger requests: Add a random delay between 0 and 1500ms
-      // This prevents hitting the rate limit instantly when a grid of icons loads
-      const delay = Math.floor(Math.random() * 1500);
-      await new Promise(r => setTimeout(r, delay));
-      
+      // Removed artificial delay to support instant loading from cache
       if (!isMounted) return;
 
       try {

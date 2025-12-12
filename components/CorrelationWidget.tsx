@@ -15,7 +15,7 @@ export const CorrelationWidget: React.FC<CorrelationWidgetProps> = ({ history })
     return (
       <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-[#F9DFDF] dark:border-gray-700 p-6 flex flex-col items-center justify-center text-center h-full min-h-[200px] transition-colors duration-300">
          <PresentationChartLineIcon className="h-10 w-10 text-gray-300 mb-3" />
-         <h3 className="font-bold text-gray-500 dark:text-gray-400 font-['Fredoka']">Not enough data</h3>
+         <h3 className="font-bold text-gray-500 dark:text-gray-400 font-serif">Not enough data</h3>
          <p className="text-xs text-gray-400 mt-1">
              Track habits for 3+ days to unlock AI Correlation insights.
          </p>
@@ -30,7 +30,7 @@ export const CorrelationWidget: React.FC<CorrelationWidgetProps> = ({ history })
              <PresentationChartLineIcon className="h-5 w-5 text-[#F5AFAF]" />
         </div>
         <div>
-            <h3 className="font-bold text-gray-800 dark:text-white font-['Fredoka']">Smart Correlations</h3>
+            <h3 className="font-bold text-gray-700 dark:text-white font-serif">Smart Correlations</h3>
             <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wide">Data Science Engine</p>
         </div>
       </div>

@@ -49,7 +49,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ history }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-[#F9DFDF] dark:border-gray-700 p-6 transition-colors duration-300">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold text-gray-800 dark:text-white font-['Fredoka']">Consistency Graph</h3>
+        <h3 className="font-bold text-gray-700 dark:text-white font-serif">Consistency Graph</h3>
         <div className="flex items-center gap-2 text-xs text-gray-400">
             <span>Less</span>
             <div className="flex gap-1">

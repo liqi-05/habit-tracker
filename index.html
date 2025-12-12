@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Healthy Habits AI Tracker</title>
+    <title>HabitHero</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -11,35 +12,54 @@
         theme: {
           extend: {
             colors: {
+              dream: {
+                bg: '#FFF5F5', // Very light pink background
+                pink: '#FFB7B2',
+                orange: '#FFDAC1',
+                yellow: '#FFF5BA',
+                green: '#B5EAD7',
+                blue: '#C7CEEA',
+                purple: '#E0BBE4',
+                dark: '#6D6D6D',
+                card: '#FFFFFF'
+              },
               dark: {
                 bg: '#1a1a1a',
                 card: '#2d2d2d',
                 text: '#e5e5e5'
               }
+            },
+            fontFamily: {
+              serif: ['"Fraunces"', 'serif'],
+              sans: ['"Quicksand"', 'sans-serif'],
             }
           }
         }
       }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,100..900,100,1&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       body {
-        font-family: 'Inter', sans-serif;
-        /* Default Light Mode Base */
-        background-color: #FCF8F8; 
+        font-family: 'Quicksand', sans-serif;
+        background-color: #FFF5F5;
+        background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+        background-image: radial-gradient(at 40% 20%, hsla(28,100%,74%,0.1) 0px, transparent 50%),
+                          radial-gradient(at 80% 0%, hsla(189,100%,56%,0.1) 0px, transparent 50%),
+                          radial-gradient(at 0% 50%, hsla(340,100%,76%,0.1) 0px, transparent 50%);
         color: #4a4a4a;
         transition: background-color 0.3s ease, color 0.3s ease;
+        font-size: 16px;
       }
       
-      /* Dark Mode Base Overrides (applied via class on body/html) */
       .dark body {
         background-color: #111827;
+        background-image: none;
         color: #e5e7eb;
       }
       
-      h1, h2, h3, h4, .cute-font {
-        font-family: 'Fredoka', sans-serif;
+      h1, h2, h3, h4, .font-serif {
+        font-family: 'Fraunces', serif;
+        font-variation-settings: "SOFT" 100, "WONK" 1;
       }
 
       /* Custom Range Slider Styling for Webkit */
@@ -47,45 +67,82 @@
         -webkit-appearance: none;
         width: 100%;
         background: transparent;
-        border-radius: 999px; /* Ensure input border radius clips gradient */
+        height: 12px;
+        border-radius: 999px;
       }
 
+      input[type=range]:focus {
+        outline: none;
+      }
+
+      /* Thumb Styling */
       input[type=range]::-webkit-slider-thumb {
         -webkit-appearance: none;
         height: 24px;
         width: 24px;
         border-radius: 50%;
-        background: #F5AFAF;
-        margin-top: -6px; /* (Track Height 12px - Thumb Height 24px) / 2 */
+        background: #FFFFFF;
+        margin-top: -6px; /* Centers thumb on track (24px thumb - 12px track) / 2 = 6px offset */
         cursor: pointer;
-        border: 3px solid white;
-        box-shadow: 0 2px 5px rgba(245, 175, 175, 0.5);
-        transition: transform 0.1s;
+        border: 4px solid currentColor; /* Uses the 'color' property from inline style */
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        transition: transform 0.1s, box-shadow 0.1s;
+      }
+      
+      input[type=range]:active::-webkit-slider-thumb {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      }
+      
+      /* Track Styling - Transparent to let gradient on input show */
+      input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 12px;
+        cursor: pointer;
+        background: transparent;
+        border-radius: 999px;
+      }
+      
+      /* Firefox Support */
+      input[type=range]::-moz-range-thumb {
+        height: 24px;
+        width: 24px;
+        border: 4px solid currentColor;
+        border-radius: 50%;
+        background: #FFFFFF;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      }
+      
+      input[type=range]::-moz-range-track {
+        width: 100%;
+        height: 12px;
+        cursor: pointer;
+        background: transparent;
+        border-radius: 999px;
       }
       
       .dark input[type=range]::-webkit-slider-thumb {
-        border-color: #374151;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        background: #1F2937;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      }
+      
+      .dark input[type=range]::-moz-range-thumb {
+        background: #1F2937;
       }
 
-      input[type=range]:active::-webkit-slider-thumb {
-        transform: scale(1.1);
+      /* Cloud shape utility */
+      .cloud-shape {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
       }
-      
-      input[type=range]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 12px; /* Slightly thicker for better "bar" look */
-        cursor: pointer;
-        background: #F9DFDF;
-        border-radius: 999px; /* Fully rounded capsule look */
-      }
-      
-      .dark input[type=range]::-webkit-slider-runnable-track {
-        background: #374151;
-      }
-      
-      input[type=range]:focus {
-        outline: none;
+
+      /* Ensure Pixel Art Logic for images */
+      img {
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -o-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        -ms-interpolation-mode: nearest-neighbor;
       }
     </style>
   <script type="importmap">
@@ -96,7 +153,8 @@
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
     "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
-    "@heroicons/react/": "https://aistudiocdn.com/@heroicons/react@^2.2.0/"
+    "@heroicons/react/": "https://aistudiocdn.com/@heroicons/react@^2.2.0/",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.3"
   }
 }
 </script>

@@ -61,7 +61,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
           <XMarkIcon className="h-6 w-6" />
         </button>
         
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2 font-['Fredoka']">
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-white mb-6 flex items-center gap-2 font-serif">
           Settings
         </h2>
         
@@ -119,7 +119,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
             </div>
           </div>
           
-          <div className="text-center text-xs text-gray-400 dark:text-gray-500 font-['Fredoka']">
+          <div className="text-center text-xs text-gray-400 dark:text-gray-500 font-serif">
              v1.3.0 • Healthy Habits Tracker
           </div>
         </div>

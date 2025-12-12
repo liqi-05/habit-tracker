@@ -33,7 +33,7 @@ export const ProfileView: React.FC = () => {
                         <div className="w-16 h-16 bg-[#FBEFEF] dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                             <LockClosedIcon className="h-8 w-8 text-[#F5AFAF]" />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-800 dark:text-white font-['Fredoka'] mb-2">
+                        <h3 className="text-2xl font-bold text-gray-700 dark:text-white font-serif mb-2">
                             Unlock Your Profile
                         </h3>
                         <p className="text-gray-600 dark:text-gray-300 mb-6">

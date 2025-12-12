@@ -91,10 +91,10 @@ export const Dashboard: React.FC = () => {
         <section className="space-y-6">
             {/* Streak Header */}
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white font-['Fredoka']">Today's Analysis</h2>
+                <h2 className="text-2xl font-bold text-gray-700 dark:text-white font-serif">Today's Analysis</h2>
                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 px-4 py-2 rounded-2xl border border-orange-200 dark:border-orange-900 shadow-sm">
                     <FireIcon className="h-5 w-5 text-orange-500 animate-pulse" />
-                    <span className="text-orange-800 dark:text-orange-200 font-bold font-['Fredoka']">
+                    <span className="text-orange-800 dark:text-orange-200 font-bold font-serif">
                         {currentStreak} Day Streak!
                     </span>
                 </div>
@@ -121,7 +121,7 @@ export const Dashboard: React.FC = () => {
                     ) : (
                         <div className="h-full bg-white dark:bg-gray-800 rounded-3xl shadow-sm border-2 border-[#F9DFDF] dark:border-gray-700 p-6 flex flex-col items-center justify-center text-center gap-4 transition-colors duration-300 min-h-[300px]">
                             <div className="text-6xl opacity-20 animate-bounce-slow">🎯</div>
-                            <p className="text-gray-400 dark:text-gray-500 font-medium font-['Fredoka'] text-lg">
+                            <p className="text-gray-400 dark:text-gray-500 font-medium font-serif text-lg">
                                 Fill out your daily check-in<br/>to get your wellness score!
                             </p>
                         </div>

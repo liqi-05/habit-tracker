@@ -63,7 +63,7 @@ export const AvatarEditorModal: React.FC<AvatarEditorModalProps> = ({ isOpen, on
           <XMarkIcon className="h-6 w-6" />
         </button>
 
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 font-['Fredoka'] text-center">
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-white mb-6 font-serif text-center">
           Style Your Avatar
         </h2>
 

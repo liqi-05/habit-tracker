@@ -55,7 +55,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <div className="w-16 h-16 rounded-full bg-[#FBEFEF] dark:bg-gray-700 flex items-center justify-center mb-3">
                 <img src={STATIC_ASSETS.auth} alt="Auth" className="w-12 h-12 object-contain" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white font-['Fredoka']">
+            <h2 className="text-2xl font-bold text-gray-700 dark:text-white font-serif">
                 {isLogin ? 'Welcome Back!' : 'Join the Club'}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">

@@ -69,7 +69,7 @@ export const QuickLogModal: React.FC<QuickLogModalProps> = ({ isOpen, onClose })
         
         {/* Header */}
         <div className="sticky top-0 z-10 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
-           <h2 className="text-xl font-bold text-gray-800 dark:text-white font-['Fredoka']">
+           <h2 className="text-xl font-bold text-gray-700 dark:text-white font-serif">
              Quick Log
            </h2>
            <button 

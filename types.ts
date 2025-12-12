@@ -7,6 +7,7 @@ export interface DailyStats {
   stressLevel: number; // 1-10, New field
   didRead: boolean;
   didExercise: boolean;
+  note?: string; // Captures natural language input
 }
 
 export interface PredictionResult {

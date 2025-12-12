@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserProgress, DailyStats } from '../types';
 import { authService } from '../services/authService';
@@ -9,9 +8,9 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, username: string, password: string) => Promise<void>;
   logout: () => void;
-  updateUserProgress: (progress: UserProgress) => void;
-  updateUserAvatar: (prompt: string) => void;
-  saveDailyLog: (stats: DailyStats, points: number) => void;
+  updateUserProgress: (progress: UserProgress) => Promise<void>;
+  updateUserAvatar: (prompt: string) => Promise<void>;
+  saveDailyLog: (stats: DailyStats, points: number) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,23 +40,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
-  const updateUserProgress = (progress: UserProgress) => {
+  const updateUserProgress = async (progress: UserProgress) => {
     if (user) {
-      const updatedUser = authService.updateProgress(user, progress);
+      const updatedUser = await authService.updateProgress(user, progress);
       setUser(updatedUser);
     }
   };
 
-  const updateUserAvatar = (prompt: string) => {
+  const updateUserAvatar = async (prompt: string) => {
     if (user) {
-      const updatedUser = authService.updateAvatar(user, prompt);
+      const updatedUser = await authService.updateAvatar(user, prompt);
       setUser(updatedUser);
     }
   };
 
-  const saveDailyLog = (stats: DailyStats, points: number) => {
+  const saveDailyLog = async (stats: DailyStats, points: number) => {
     if (user) {
-        const updatedUser = authService.logDailyStats(user, stats, points);
+        const updatedUser = await authService.logDailyStats(user, stats, points);
         setUser(updatedUser);
     }
   };

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { PredictionResult } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
@@ -7,6 +8,9 @@ interface BurnoutGaugeProps {
 }
 
 export const BurnoutGauge: React.FC<BurnoutGaugeProps> = ({ prediction }) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const data = [
     { name: 'Score', value: prediction.burnoutScore },
     { name: 'Remaining', value: 10 - prediction.burnoutScore },
@@ -23,7 +27,7 @@ export const BurnoutGauge: React.FC<BurnoutGaugeProps> = ({ prediction }) => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-[#F9DFDF] dark:border-gray-700 p-6 h-full flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-300">
-        <h2 className="w-full text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center justify-center gap-2">
+        <h2 className="w-full text-lg font-bold text-gray-700 dark:text-white mb-4 flex items-center justify-center gap-2">
             Burnout Risk
         </h2>
       
@@ -49,7 +53,7 @@ export const BurnoutGauge: React.FC<BurnoutGaugeProps> = ({ prediction }) => {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-8">
-            <span className="text-5xl font-extrabold text-gray-800 dark:text-white">{prediction.burnoutScore}</span>
+            <span className="text-5xl font-extrabold text-gray-700 dark:text-white">{prediction.burnoutScore}</span>
             <span className="text-xs text-gray-400 dark:text-gray-500 font-medium mt-1">OUT OF 10</span>
         </div>
       </div>

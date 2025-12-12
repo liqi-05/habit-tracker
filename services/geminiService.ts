@@ -31,7 +31,7 @@ export const generateThemeIcon = async (concept: string): Promise<string | null>
   const client = getClient();
   if (!client) return null;
 
-  // Prompt updated to match the "Cute Tomato" reference art style
+  // Prompt updated to match the "Kawaii Doodle" reference art style
   const imagePrompt = `
     A cute, simple, hand-drawn vector sticker illustration of ${concept}.
     Style: Minimalist doodle, thick dark uneven outlines (like a marker pen), flat pastel colors.
@@ -159,7 +159,7 @@ export const getCoachAdvice = async (
   }
 
   const prompt = `
-    Analyze the following user health data and burnout prediction.
+    Analyze the following user health data, burnout prediction, and user notes.
     
     User Stats:
     - Sleep: ${stats.sleepHours} hours
@@ -174,7 +174,13 @@ export const getCoachAdvice = async (
     - Burnout Score: ${prediction.burnoutScore}/10
     - Risk Level: ${prediction.riskLevel}
 
+    User Journal/Note: "${stats.note || 'No specific notes provided.'}"
+
+    INSTRUCTIONS:
     Act as an empathetic, professional productivity and health coach. 
+    Analyze the user's explicit note/journal entry in combination with the numeric stats. 
+    If the note mentions specific feelings or events (e.g., "tired because of deadline"), explicitly reference that in the summary.
+    
     Provide advice in JSON format.
   `;
 
@@ -187,7 +193,7 @@ export const getCoachAdvice = async (
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            summary: { type: Type.STRING, description: "A 1-2 sentence summary of the situation." },
+            summary: { type: Type.STRING, description: "A 1-2 sentence summary of the situation, referencing specific user notes if available." },
             actionableSteps: { 
               type: Type.ARRAY, 
               items: { type: Type.STRING },

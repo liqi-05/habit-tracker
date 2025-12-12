@@ -35,7 +35,7 @@ export const SmartInsightCard: React.FC<SmartInsightCardProps> = ({ history, isV
                             New Discovery
                         </span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white font-['Fredoka'] mb-1">
+                    <h3 className="text-xl font-bold text-gray-700 dark:text-white font-serif mb-1">
                          "{topInsight.description}"
                     </h3>
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
