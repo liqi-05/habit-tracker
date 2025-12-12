@@ -136,7 +136,7 @@ export const HabitForm: React.FC<HabitFormProps> = ({
               '#FFDAC1'; // orange
     
     return {
-        background: `linear-gradient(to right, ${c} 0%, ${c} ${clampedPercent}%, #f3f4f6 ${clampedPercent}%, #f3f4f6 100%)`,
+        backgroundImage: `linear-gradient(to right, ${c} 0%, ${c} ${clampedPercent}%, #f3f4f6 ${clampedPercent}%, #f3f4f6 100%)`,
         color: c // This passes the color to the CSS 'currentColor' for the thumb border
     };
   };
