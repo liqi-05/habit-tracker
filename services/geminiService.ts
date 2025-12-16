@@ -8,9 +8,9 @@ const ICON_CACHE_KEY = 'hh_icon_cache_v1';
 
 // We assume the API key is available in the environment variables as per instructions.
 const getClient = () => {
-  const apiKey = process.env.API_KEY; 
-  if (!apiKey) {
-    console.warn("API Key not found in process.env.API_KEY. Using mock mode.");
+  const apiKey = import.meta.env.VITE_API_KEY;
+  if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+    console.warn("API Key not found or default. Using mock mode.");
     return null;
   }
   return new GoogleGenAI({ apiKey });
@@ -50,7 +50,7 @@ export const generateThemeIcon = async (concept: string): Promise<string | null>
       },
       config: {
         imageConfig: {
-            aspectRatio: "1:1"
+          aspectRatio: "1:1"
         }
       }
     });
@@ -58,21 +58,21 @@ export const generateThemeIcon = async (concept: string): Promise<string | null>
     for (const part of response.candidates?.[0]?.content?.parts || []) {
       if (part.inlineData) {
         const base64Image = `data:image/png;base64,${part.inlineData.data}`;
-        
+
         // 2. Save to Cache
         try {
-            const cacheStr = localStorage.getItem(ICON_CACHE_KEY);
-            const cache = cacheStr ? JSON.parse(cacheStr) : {};
-            cache[concept] = base64Image;
-            
-            // Simple safeguard: If cache gets too big (>4MB), clear it to avoid QuotaExceededError
-            if (JSON.stringify(cache).length > 4 * 1024 * 1024) {
-                localStorage.removeItem(ICON_CACHE_KEY);
-            } else {
-                localStorage.setItem(ICON_CACHE_KEY, JSON.stringify(cache));
-            }
+          const cacheStr = localStorage.getItem(ICON_CACHE_KEY);
+          const cache = cacheStr ? JSON.parse(cacheStr) : {};
+          cache[concept] = base64Image;
+
+          // Simple safeguard: If cache gets too big (>4MB), clear it to avoid QuotaExceededError
+          if (JSON.stringify(cache).length > 4 * 1024 * 1024) {
+            localStorage.removeItem(ICON_CACHE_KEY);
+          } else {
+            localStorage.setItem(ICON_CACHE_KEY, JSON.stringify(cache));
+          }
         } catch (e) {
-            console.warn("Could not save icon to cache (likely storage full)", e);
+          console.warn("Could not save icon to cache (likely storage full)", e);
         }
 
         return base64Image;
@@ -82,8 +82,8 @@ export const generateThemeIcon = async (concept: string): Promise<string | null>
   } catch (error: any) {
     // Gracefully handle Rate Limits
     if (error.status === 'RESOURCE_EXHAUSTED' || error.code === 429 || error.toString().includes('429')) {
-        console.warn(`Gemini API Quota Exceeded for icon: "${concept}". Showing fallback emoji.`);
-        return null;
+      console.warn(`Gemini API Quota Exceeded for icon: "${concept}". Showing fallback emoji.`);
+      return null;
     }
     console.error("Icon generation failed:", error);
     return null;
@@ -146,7 +146,7 @@ export const getCoachAdvice = async (
 
   // Fallback Mock Mode
   if (!client) {
-    await new Promise(resolve => setTimeout(resolve, 1500)); 
+    await new Promise(resolve => setTimeout(resolve, 1500));
     return {
       summary: "I'm currently running in Offline Mode. Watch your stress levels.",
       actionableSteps: [
@@ -194,8 +194,8 @@ export const getCoachAdvice = async (
           type: Type.OBJECT,
           properties: {
             summary: { type: Type.STRING, description: "A 1-2 sentence summary of the situation, referencing specific user notes if available." },
-            actionableSteps: { 
-              type: Type.ARRAY, 
+            actionableSteps: {
+              type: Type.ARRAY,
               items: { type: Type.STRING },
               description: "3 specific, short actionable bullet points."
             },
@@ -209,7 +209,7 @@ export const getCoachAdvice = async (
     if (response.text) {
       return JSON.parse(response.text) as CoachAdvice;
     }
-    
+
     throw new Error("Empty response from AI");
 
   } catch (error) {
